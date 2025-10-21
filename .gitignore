@@ -1,0 +1,12 @@
+# Configuration locale
+.env
+config/database.php
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+
+# PHP
+vendor/
