@@ -1,2 +1,2 @@
 # classes-php
-Créer une classe ainsi que ces méthodes associées.
+Création d'une classe et ses méthodes associées.
