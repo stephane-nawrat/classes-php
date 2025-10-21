@@ -263,4 +263,74 @@ class User
 
         return false;
     }
+
+    /**
+     * Vérifie si l'utilisateur est connecté
+     * 
+     * @return bool True si connecté, False sinon
+     */
+    public function isConnected()
+    {
+        return $this->id !== null;
+    }
+
+    /**
+     * Retourne toutes les informations de l'utilisateur
+     * 
+     * @return array|null Tableau avec les infos ou null si non connecté
+     */
+    public function getAllInfos()
+    {
+        if ($this->id === null) {
+            return null;
+        }
+
+        return [
+            'id' => $this->id,
+            'login' => $this->login,
+            'email' => $this->email,
+            'firstname' => $this->firstname,
+            'lastname' => $this->lastname
+        ];
+    }
+
+    /**
+     * Retourne le login de l'utilisateur
+     * 
+     * @return string|null
+     */
+    public function getLogin()
+    {
+        return $this->login;
+    }
+
+    /**
+     * Retourne l'email de l'utilisateur
+     * 
+     * @return string|null
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Retourne le prénom de l'utilisateur
+     * 
+     * @return string|null
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * Retourne le nom de l'utilisateur
+     * 
+     * @return string|null
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
 }
