@@ -170,4 +170,45 @@ class User
         $this->firstname = null;
         $this->lastname = null;
     }
+
+    /**
+     * Suppression de l'utilisateur
+     * Supprime l'utilisateur de la BDD et le déconnecte
+     * 
+     * @return bool True si suppression réussie, False sinon
+     */
+    public function delete()
+    {
+        // 1. Vérifier que l'utilisateur est connecté
+        if ($this->id === null) {
+            // Pas d'ID = pas connecté
+            return false;
+        }
+
+        // 2. Préparation de la requête DELETE
+        $sql = "DELETE FROM users WHERE id = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            die("Erreur de préparation : " . mysqli_error($this->conn));
+        }
+
+        // 3. Binding du paramètre (integer)
+        mysqli_stmt_bind_param($stmt, "i", $this->id);
+
+        // 4. Exécution
+        $success = mysqli_stmt_execute($stmt);
+
+        // 5. Fermeture
+        mysqli_stmt_close($stmt);
+
+        // 6. Si suppression réussie, déconnexion
+        if ($success) {
+            $this->disconnect();
+            return true;
+        }
+
+        return false;
+    }
 }
