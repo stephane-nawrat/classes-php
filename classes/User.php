@@ -94,4 +94,64 @@ class User
             'lastname' => $this->lastname
         ];
     }
+
+
+    /**
+     * Connexion d'un utilisateur
+     * 
+     * @param string $login Nom d'utilisateur
+     * @param string $password Mot de passe en clair
+     * @return bool True si connexion réussie, False sinon
+     */
+    public function connect($login, $password)
+    {
+        // 1. Préparation de la requête SELECT
+        $sql = "SELECT id, login, password, email, firstname, lastname 
+                FROM users 
+                WHERE login = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            die("Erreur de préparation : " . mysqli_error($this->conn));
+        }
+
+        // 2. Binding du paramètre
+        mysqli_stmt_bind_param($stmt, "s", $login);
+
+        // 3. Exécution
+        mysqli_stmt_execute($stmt);
+
+        // 4. Liaison des résultats aux variables
+        mysqli_stmt_bind_result($stmt, $id, $dbLogin, $hashedPassword, $email, $firstname, $lastname);
+
+        // 5. Récupération de la ligne
+        if (mysqli_stmt_fetch($stmt)) {
+            // L'utilisateur existe
+
+            // 6. Vérification du mot de passe
+            if (password_verify($password, $hashedPassword)) {
+                // ✅ Mot de passe correct
+
+                // 7. Remplissage des attributs de l'objet
+                $this->id = $id;
+                $this->login = $dbLogin;
+                $this->email = $email;
+                $this->firstname = $firstname;
+                $this->lastname = $lastname;
+
+                // 8. Fermeture et retour
+                mysqli_stmt_close($stmt);
+                return true;
+            } else {
+                // ❌ Mauvais mot de passe
+                mysqli_stmt_close($stmt);
+                return false;
+            }
+        } else {
+            // ❌ Utilisateur inexistant
+            mysqli_stmt_close($stmt);
+            return false;
+        }
+    }
 }
