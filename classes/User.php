@@ -154,4 +154,20 @@ class User
             return false;
         }
     }
+
+    /**
+     * Déconnexion de l'utilisateur
+     * Réinitialise tous les attributs
+     * 
+     * @return void
+     */
+    public function disconnect()
+    {
+        // Réinitialisation de tous les attributs
+        $this->id = null;
+        $this->login = null;
+        $this->email = null;
+        $this->firstname = null;
+        $this->lastname = null;
+    }
 }
