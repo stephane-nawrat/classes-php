@@ -211,4 +211,56 @@ class User
 
         return false;
     }
+
+    /**
+     * Mise à jour des informations de l'utilisateur
+     * 
+     * @param string $login Nouveau nom d'utilisateur
+     * @param string $password Nouveau mot de passe (sera haché)
+     * @param string $email Nouvel email
+     * @param string $firstname Nouveau prénom
+     * @param string $lastname Nouveau nom
+     * @return bool True si mise à jour réussie, False sinon
+     */
+    public function update($login, $password, $email, $firstname, $lastname)
+    {
+        // 1. Vérifier que l'utilisateur est connecté
+        if ($this->id === null) {
+            return false;
+        }
+
+        // 2. Hachage du nouveau mot de passe
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // 3. Préparation de la requête UPDATE
+        $sql = "UPDATE users 
+                SET login = ?, password = ?, email = ?, firstname = ?, lastname = ? 
+                WHERE id = ?";
+
+        $stmt = mysqli_prepare($this->conn, $sql);
+
+        if (!$stmt) {
+            die("Erreur de préparation : " . mysqli_error($this->conn));
+        }
+
+        // 4. Binding des paramètres (5 strings + 1 integer)
+        mysqli_stmt_bind_param($stmt, "sssssi", $login, $hashedPassword, $email, $firstname, $lastname, $this->id);
+
+        // 5. Exécution
+        $success = mysqli_stmt_execute($stmt);
+
+        // 6. Fermeture
+        mysqli_stmt_close($stmt);
+
+        // 7. Si mise à jour réussie, synchroniser l'objet
+        if ($success) {
+            $this->login = $login;
+            $this->email = $email;
+            $this->firstname = $firstname;
+            $this->lastname = $lastname;
+            return true;
+        }
+
+        return false;
+    }
 }
